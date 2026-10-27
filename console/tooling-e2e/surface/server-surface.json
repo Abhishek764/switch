@@ -131,6 +131,11 @@
       ]
     },
     {
+      "route": "DELETE /gateway/decision-settings",
+      "auth": "session",
+      "flags": []
+    },
+    {
       "route": "DELETE /gateway/documents/{document_id}",
       "auth": "session",
       "flags": []
@@ -508,6 +513,11 @@
       "flags": [
         "service_connections"
       ]
+    },
+    {
+      "route": "GET /gateway/decision-settings",
+      "auth": "session",
+      "flags": []
     },
     {
       "route": "GET /gateway/docs",
@@ -1184,6 +1194,11 @@
       ]
     },
     {
+      "route": "POST /gateway/decision-settings/test",
+      "auth": "session",
+      "flags": []
+    },
+    {
       "route": "POST /gateway/documents",
       "auth": "session",
       "flags": []
@@ -1523,6 +1538,11 @@
       ]
     },
     {
+      "route": "PUT /gateway/decision-settings",
+      "auth": "session",
+      "flags": []
+    },
+    {
       "route": "PUT /gateway/management/agents/{agent_id}",
       "auth": "session",
       "flags": [
@@ -1554,6 +1574,11 @@
     },
     {
       "route": "PUT /gateway/room-groups/{group_id}/rooms",
+      "auth": "session",
+      "flags": []
+    },
+    {
+      "route": "PUT /gateway/rooms/{room_id}/auto-route",
       "auth": "session",
       "flags": []
     },
