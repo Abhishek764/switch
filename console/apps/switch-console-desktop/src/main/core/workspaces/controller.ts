@@ -69,6 +69,7 @@ import {
   connectServiceWithKey,
   disconnectGitHub,
   disconnectService,
+  setRoomAutoRoute,
   setServiceGrant,
   setWorkspaceService,
   removeServiceGrant,
@@ -152,6 +153,8 @@ import type {
   RemoteBridgeType,
   RemoteExternalUser,
   RemoteRoomDetail,
+  RoomAutoRoute,
+  SetRoomAutoRouteParams,
   RemoteRoomGroup,
   RemoteRoomRole,
   RemoteRoomSummary,
@@ -932,6 +935,20 @@ export const workspacesController = createRPCController({
         description: params.description,
         instructions: params.instructions,
       })
+    ),
+
+  /**
+   * Turn auto-route on or off in a room, or name its triage agent, through the
+   * same store `!auto-route` writes. Answers with the setting as it now stands;
+   * a refusal propagates, so the toggle never shows a state the server didn't take.
+   */
+  setRoomAutoRoute: ({
+    workspaceId,
+    roomId,
+    ...changes
+  }: SetRoomAutoRouteParams): Promise<RoomAutoRoute> =>
+    withReachableWorkspaceSession(workspaceId, (server) =>
+      setRoomAutoRoute(server, roomId, changes)
     ),
 
   /**
