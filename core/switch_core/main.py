@@ -29,6 +29,7 @@ from sqlalchemy.pool import NullPool
 
 from switch_core.announcer import Announcer
 from switch_core.bridges.agent.app import create_agent_bridge_app
+from switch_core.bridges.agent.commands import COMMANDS_BY_NAME
 from switch_core.bridges.agent.protocol.agent_connections import (
     HEARTBEAT_TTL_SECONDS,
     AgentConnectionRegistry,
@@ -1229,14 +1230,14 @@ async def run(config: SwitchConfig, process_id: str) -> None:
         usage_store=usage_store,
         id_server_name=config.id_server_name,
         media_max_bytes=config.agent_media_max_bytes,
-        agent_chats_enabled=config.agent_chats_enabled,
-        group_chats_enabled=config.group_chats_enabled,
         buddy_slack_handoff_enabled=config.buddy_slack_handoff_enabled,
         connections=connections,
+        command_names=frozenset(COMMANDS_BY_NAME),
     )
     # Changes to people's chats made in another process wake the Console
     # streams held here too (`chats/signals.py`).
     ChatSignals(service=chat_service, bus=signal_bus)
+    room_service.use_chats(chat_service)
     room_service.on_room_agents_changed(chat_service.sync_room)
     protocol.set_room_agents_listener(room_service.room_agents_changed)
     protocol.set_agent_profile_listener(chat_service.agent_changed)
@@ -1659,6 +1660,7 @@ async def run(config: SwitchConfig, process_id: str) -> None:
     # same missing client.
     async with boot_lock(config):
         await room_service.reconcile_room_clients()
+        await room_service.retire_mattermost_bridges()
 
     logger.info(
         "Switch is running on http://%s:%d", config.server_host, config.server_port

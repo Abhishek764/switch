@@ -1290,7 +1290,7 @@ async def post_room_users(
     principal = Principal(user.id, is_admin)
     await _require_room_released(session, room_store, room_id, principal, "write")
     try:
-        await room_service.add_users_to_room(room_id, req.user_names)
+        await room_service.add_users_to_room(room_id, req.user_names, user)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     await session.commit()

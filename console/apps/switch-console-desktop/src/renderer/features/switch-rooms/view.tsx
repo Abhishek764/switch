@@ -22,7 +22,7 @@ import { roomEmbedSlotStore } from './room-embed-slot';
 import { openRoomChannel } from './room-links';
 import { RoomResourcesPanel } from './room-resources-panel';
 import { RoomSidePanel } from './room-side-panel';
-import { embeddedRoomTab, type RoomTab, roomTabStore } from './room-tab-store';
+import { type RoomTab, roomTabStore } from './room-tab-store';
 
 /**
  * Opens the room's channel in the messaging app it is bridged to. The embedded
@@ -197,8 +197,7 @@ const RoomMainPanel = observer(function RoomMainPanel(): React.JSX.Element {
 
 /**
  * The room's conversation beside its side panel: a Console chat drawn here, or
- * a box that `RoomEmbedLayer` lays the messaging app's conversation over —
- * the app itself where it can be drawn inline, otherwise its way out to it.
+ * a box that `RoomEmbedLayer` lays the way out to the messaging app over.
  */
 const RoomConversation = observer(function RoomConversation({ roomId }: { roomId: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -216,16 +215,10 @@ const RoomConversation = observer(function RoomConversation({ roomId }: { roomId
   );
 });
 
-/** The side a room shown inside another page opens on, until one is picked. */
-export function embeddedRoomFallbackTab(roomId: string): RoomTab {
-  return embeddedRoomTab(switchRoomsStore.roomBridgeTypeById(roomId));
-}
-
 /**
  * A room shown inside another page, as an agent's page shows one beside its
  * column: the same conversation as the room view, which `RoomEmbedLayer` lays
- * over this box, or the same settings — the conversation first when its
- * platform can be drawn here, the settings first when it cannot. Fills its
+ * over this box, or the same settings, which it opens on. Fills its
  * parent; the page puts the room's `RoomTabs` and `OpenInMessagingApp` in its
  * own title bar.
  */
@@ -239,7 +232,7 @@ export const EmbeddedRoom = observer(function EmbeddedRoom({ roomId }: { roomId:
   }, [roomId]);
   return (
     <div ref={ref} data-testid="embedded-room" className="min-h-0 flex-1">
-      {embeddedTabContent(roomId, roomTabStore.tabFor(roomId, embeddedRoomFallbackTab(roomId)))}
+      {embeddedTabContent(roomId, roomTabStore.tabFor(roomId, 'configuration'))}
     </div>
   );
 });
@@ -253,9 +246,8 @@ function embeddedTabContent(roomId: string, tab: RoomTab): React.ReactNode {
 export const roomView = {
   WrapView: ({ children }: { children: React.ReactNode; roomId: string }) => <>{children}</>,
   TitlebarSlot: RoomTitlebar,
-  // The conversation itself is drawn by RoomEmbedLayer, which is mounted above
-  // the view switch so its <webview> survives navigating away and back. This
-  // panel only ever holds the room's other side.
+  // A bridged room's conversation notice is drawn by RoomEmbedLayer, mounted
+  // above the view switch; this panel holds the room's other side.
   MainPanel: RoomMainPanel,
   canActivate: (params: unknown): GuardResult => {
     const roomId =
