@@ -1341,7 +1341,10 @@ class SwitchConfig(BaseSettings):
     def feature_flags(self) -> dict[str, bool]:
         """Every known flag and whether this deployment turned it on."""
         enabled = self._enabled_feature_flags()
-        return {key: key in enabled for key in sorted(KNOWN_FEATURE_FLAGS)}
+        return {
+            key: key in enabled or key in (AGENT_CHATS, GROUP_CHATS)
+            for key in sorted(KNOWN_FEATURE_FLAGS)
+        }
 
     @property
     def deployment_kind(self) -> DeploymentKind:
@@ -1372,14 +1375,6 @@ class SwitchConfig(BaseSettings):
     @property
     def follow_the_conversation_enabled(self) -> bool:
         return self.feature_flags[FOLLOW_THE_CONVERSATION]
-
-    @property
-    def agent_chats_enabled(self) -> bool:
-        return self.feature_flags[AGENT_CHATS]
-
-    @property
-    def group_chats_enabled(self) -> bool:
-        return self.feature_flags[GROUP_CHATS]
 
     @property
     def buddy_slack_handoff_enabled(self) -> bool:

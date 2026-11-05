@@ -75,6 +75,7 @@ SECRETS="$WORK/secrets"
 
 cd "$REPO"
 COMPOSE=(docker compose -p switch-e2e-ephemeral -f deploy/local/docker-compose.yml
+         -f deploy/local/docker-compose.e2e-mattermost.yml
          --env-file "$ENV_FILE" --project-directory .)
 SERVER_PID=""
 CONTROLLER_PID=""

@@ -918,15 +918,12 @@ async def create_room(
 ) -> dict[str, Any]:
     """Create a new Switch room.
 
-    Rooms are bridged by default: omitting `bridge_id` uses the instance's
-    default bridge (on a standalone deployment, the bundled Mattermost), so the
-    room is readable by humans without the caller knowing the deployment's
-    topology. Pass `bridge_id` to choose a specific bridge — call
-    `list_bridges` to discover ids and present the choice to the user. Pass
-    `internal_only=True` for an agent-only room with no external channel.
-
-    If the instance has no default bridge configured and you omit `bridge_id`,
-    the room is created internal-only.
+    Omitting `bridge_id` uses the instance's default bridge if one is
+    configured; otherwise the room is unbridged and its people (its creator and
+    the `user_names` given) read it in Switch Console. Pass `bridge_id` to
+    choose a specific bridge — call `list_bridges` to discover ids and present
+    the choice to the user. Pass `internal_only=True` for an agent-only room
+    with no external channel.
 
     Args:
         name: Display name for the room.
