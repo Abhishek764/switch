@@ -39,7 +39,11 @@ import {
   removeDownloads,
   writeLocalSetting,
 } from './decision/local-setting';
-import { pidFileStaleServers, spawnModelServer } from './decision/model-server';
+import {
+  pidFileStaleServers,
+  STALE_STOP_GRACE_MS,
+  spawnModelServer,
+} from './decision/model-server';
 import {
   DecisionRuntime,
   DEFAULT_DECISION_TIMING,
@@ -699,6 +703,7 @@ async function runCommand(args: string[]): Promise<number> {
           file: decisionFiles.pidFile,
           run: runDetectCommand,
           kill: (pid, signal) => process.kill(pid, signal),
+          graceMs: STALE_STOP_GRACE_MS,
         }),
         extract: tarExtract,
         diskFree: freeDiskBytes,
