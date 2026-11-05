@@ -12,7 +12,6 @@ import { refreshSidebarRoomState } from '@renderer/features/sidebar/sidebar-tree
 import { isConsoleGroupChatSummary } from '@renderer/features/switch-servers/room-filters';
 import { switchRoomsStore } from '@renderer/features/switch-servers/switch-rooms-store';
 import { switchServersStore } from '@renderer/features/switch-servers/switch-servers-store';
-import { administersWorkspaceInScope } from '@renderer/features/switch-servers/workspace-admin';
 import { workspacesStore } from '@renderer/features/workspaces/workspaces-store';
 import { AgentAvatar } from '@renderer/lib/components/agent-avatar';
 import { bridgePlatformLabel } from '@renderer/lib/components/bridge-platform';
@@ -818,20 +817,6 @@ function Field({
   );
 }
 
-/**
- * Whether the signed-in account may change the room's auto-route: its owner,
- * or an admin of its workspace (the server's operator among them), as the
- * gateway's own rule has it. Unknown ownership answers no, so a switch that
- * would only be refused is held rather than offered.
- */
-function canManageAutoRoute(workspaceId: string, room: RemoteRoomDetail): boolean {
-  const serverId = workspacesStore.serverIdFor(workspaceId);
-  if (!serverId) return false;
-  if (administersWorkspaceInScope(serverId)) return true;
-  const user = switchServersStore.statusFor(serverId)?.user ?? null;
-  return user !== null && room.ownerId !== null && room.ownerId === user.id;
-}
-
 /** The room's auto-route switch and triage agent, offering the room's own agents. */
 const AutoRouteSection = observer(function AutoRouteSection({
   workspaceId,
@@ -854,7 +839,8 @@ const AutoRouteSection = observer(function AutoRouteSection({
       room={room}
       autoRoute={autoRoute}
       agents={agents}
-      canManage={canManageAutoRoute(workspaceId, room)}
+      canWrite={room.canWrite}
+      canManage={room.canManage}
       detailKey={roomDetailKey(workspaceId, room.id)}
     />
   );

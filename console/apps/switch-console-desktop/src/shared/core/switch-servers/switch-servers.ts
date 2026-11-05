@@ -385,6 +385,15 @@ export type RemoteRoomDetail = RemoteRoomSummary & {
   channelOnDelete?: ChannelRetirement | null;
   /** The name of the platform channel the room is linked to, as Switch last saw it; null when it has not. */
   linkedChannelName: string | null;
+  /** Whether the signed-in account may write to the room (its owner, a
+   * workspace admin, or anyone on a publicly writable room), as the server
+   * works it out. Turning auto-route on or off needs it. False from a server
+   * that does not say. */
+  canWrite: boolean;
+  /** Whether the signed-in account manages the room: its owner or a workspace
+   * admin. Naming the room's triage agent needs it. False from a server that
+   * does not say. */
+  canManage: boolean;
   /** Whether untagged messages here are routed by the workspace's decision
    * service. Undefined from a server that predates decision routing. */
   autoRoute?: RoomAutoRoute;

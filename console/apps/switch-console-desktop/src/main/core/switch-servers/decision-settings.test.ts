@@ -480,6 +480,18 @@ describe('a room’s auto-route setting', () => {
     expect(room.autoRoute).toBeUndefined();
   });
 
+  it('reads what the account may do in the room, and says no where the server does not', async () => {
+    fetchMock.mockResolvedValueOnce(
+      response(200, { ...ROOM_JSON, can_write: true, can_manage: false })
+    );
+    const writer = await fetchRoomDetail(SERVER, 'room-1');
+    expect([writer.canWrite, writer.canManage]).toEqual([true, false]);
+
+    fetchMock.mockResolvedValueOnce(response(200, ROOM_JSON));
+    const unsaid = await fetchRoomDetail(SERVER, 'room-1');
+    expect([unsaid.canWrite, unsaid.canManage]).toEqual([false, false]);
+  });
+
   it('PUTs only the fields changed and returns the setting as it now stands', async () => {
     fetchMock.mockResolvedValue(
       response(200, { on: false, available: true, reason: null, fallback_agent: null })

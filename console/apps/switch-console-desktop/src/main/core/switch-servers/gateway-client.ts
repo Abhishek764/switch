@@ -3412,6 +3412,9 @@ type RoomDetailJson = RoomSummaryJson & {
    * "no channel", so the delete dialog can say it does not know. */
   channel_on_delete?: ChannelRetirement | null;
   linked_channel_name?: string | null;
+  /** Absent from a server that predates them. */
+  can_write?: boolean;
+  can_manage?: boolean;
   /** Absent from a server that predates decision routing. */
   auto_route?: RoomAutoRouteJson;
 };
@@ -3443,6 +3446,8 @@ function mapRoomDetail(r: RoomDetailJson): RemoteRoomDetail {
     connectedUserNames: r.connected_user_names ?? [],
     channelOnDelete: r.channel_on_delete,
     linkedChannelName: r.linked_channel_name ?? null,
+    canWrite: r.can_write ?? false,
+    canManage: r.can_manage ?? false,
     ...(r.auto_route ? { autoRoute: mapRoomAutoRoute(r.auto_route) } : {}),
   };
 }
